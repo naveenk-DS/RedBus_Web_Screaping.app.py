@@ -39,6 +39,6 @@ try:
 except FileNotFoundError:
     st.warning("No scraped data found. Please scrape first using the above form.")
 # ✅ Only define the function here, don't import from itself
-def scrape_redbus_data(...):
+def scrape_redbus_data(from_city='Chennai', to_city='Bangalore', date='16-Jul-2025'):
     # scraping code
     return df
