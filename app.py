@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+df = pd.read_csv("redbus_data.csv")
 
 # App title
 st.set_page_config(page_title="Redbus Data Viewer", layout="wide")
