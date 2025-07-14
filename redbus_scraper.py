@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from redbus_scraper import scrape_redbus_data
 
 st.set_page_config(page_title="Redbus Data Viewer", layout="wide")
 
@@ -39,3 +38,7 @@ try:
 
 except FileNotFoundError:
     st.warning("No scraped data found. Please scrape first using the above form.")
+# ✅ Only define the function here, don't import from itself
+def scrape_redbus_data(...):
+    # scraping code
+    return df
