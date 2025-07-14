@@ -1,58 +1,41 @@
 import streamlit as st
 import pandas as pd
-df = pd.read_csv(r"E:/Naveen/Scrap data/datas/final_busdetails_df.csv")
+from redbus_scraper import scrape_redbus_data
 
-# App title
 st.set_page_config(page_title="Redbus Data Viewer", layout="wide")
-st.title("🚌 Redbus Data Scraping Dashboard")
 
-# Load data
-@st.cache_data
-def load_data():
-    df = pd.read_csv("redbus_data.csv")  # Replace with your CSV name
-    return df
+st.title("🚌 Redbus Data Scraper & Filter App")
 
-df = load_data()
+from_city = st.text_input("From City", "Chennai")
+to_city = st.text_input("To City", "Bangalore")
+date = st.date_input("Travel Date").strftime("%d-%b-%Y")
 
-# Show full dataframe
-st.subheader("📊 Scraped Bus Data")
-st.dataframe(df)
+if st.button("Scrape Redbus Data"):
+    with st.spinner("Scraping in progress..."):
+        df = scrape_redbus_data(from_city, to_city, date)
+        st.success("Scraping completed! ✅")
+        st.dataframe(df)
 
-# Filters
-st.sidebar.header("🔍 Filter Options")
+        # Save path confirmation
+        st.info(f"Data saved to: `E:\\Naveen\\Scrap data\\redbus_data.csv`")
 
-# Filter by source city
-if 'Source' in df.columns:
-    source_cities = df['Source'].dropna().unique().tolist()
-    selected_source = st.sidebar.multiselect("Select Source City", source_cities)
-    if selected_source:
-        df = df[df['Source'].isin(selected_source)]
+# Load data if already scraped
+try:
+    df = pd.read_csv(r"E:\Naveen\Scrap data\redbus_data.csv")
+    st.subheader("📊 Filter Scraped Redbus Data")
 
-# Filter by destination city
-if 'Destination' in df.columns:
-    dest_cities = df['Destination'].dropna().unique().tolist()
-    selected_dest = st.sidebar.multiselect("Select Destination City", dest_cities)
-    if selected_dest:
-        df = df[df['Destination'].isin(selected_dest)]
+    # Filters
+    selected_operator = st.multiselect("Select Bus Operator(s)", options=df["Bus Operator"].unique())
+    selected_price = st.slider("Select Price Range", int(df["Price"].min()), int(df["Price"].max()))
 
-# Filter by Bus Type
-if 'Bus Type' in df.columns:
-    bus_types = df['Bus Type'].dropna().unique().tolist()
-    selected_bus_type = st.sidebar.multiselect("Select Bus Type", bus_types)
-    if selected_bus_type:
-        df = df[df['Bus Type'].isin(selected_bus_type)]
+    filtered_df = df.copy()
 
-# Display filtered data
-st.subheader("🔎 Filtered Results")
-st.write(f"Total Results: {len(df)}")
-st.dataframe(df)
+    if selected_operator:
+        filtered_df = filtered_df[filtered_df["Bus Operator"].isin(selected_operator)]
 
-# Optional: Save filtered data
-if not df.empty:
-    csv = df.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="📥 Download Filtered Data as CSV",
-        data=csv,
-        file_name="filtered_redbus_data.csv",
-        mime="text/csv"
-    )
+    filtered_df = filtered_df[filtered_df["Price"].astype(int) <= selected_price]
+
+    st.dataframe(filtered_df)
+
+except FileNotFoundError:
+    st.warning("No scraped data found. Please scrape first using the above form.")
