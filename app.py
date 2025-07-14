@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-df = pd.read_csv("redbus_data.csv")
+df = pd.read_csv(r"E:/Naveen/Scrap data/datas/final_busdetails_df.csv")
 
 # App title
 st.set_page_config(page_title="Redbus Data Viewer", layout="wide")
