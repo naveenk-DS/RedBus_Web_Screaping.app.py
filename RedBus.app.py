@@ -7,7 +7,7 @@ st.title("🚌 Redbus India-wide Bus Viewer")
 uploaded_file = st.file_uploader("Upload Redbus CSV", type=["csv"])
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv("redbus_data.csv")
     st.success("CSV loaded successfully!")
 
     # Your filter and display logic below...
