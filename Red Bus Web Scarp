@@ -1,0 +1,83 @@
+import time
+import csv
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+
+# Prepare cities (use common city pairs)
+routes = [
+    ("Chennai", "Bangalore"),
+    ("Mumbai", "Pune"),
+    ("Hyderabad", "Vijayawada"),
+    ("Delhi", "Jaipur"),
+    ("Kolkata", "Durgapur")
+]
+
+# Setup Chrome options
+options = Options()
+options.add_argument('--headless')  # Remove if you want to see browser
+options.add_argument('--disable-blink-features=AutomationControlled')
+
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+# Open CSV file
+with open("redbus_data.csv", "w", newline="", encoding="utf-8") as file:
+    writer = csv.writer(file)
+    writer.writerow(["Operator", "Departure", "Arrival", "Boarding", "Drop", "Price", "Rating", "Seats", "Duration", "From", "To"])
+
+    for from_city, to_city in routes:
+        driver.get("https://www.redbus.in/")
+
+        time.sleep(3)
+
+        # Source
+        src_input = driver.find_element(By.ID, "src")
+        src_input.clear()
+        src_input.send_keys(from_city)
+        time.sleep(1)
+        src_input.send_keys(Keys.ENTER)
+
+        # Destination
+        dst_input = driver.find_element(By.ID, "dest")
+        dst_input.clear()
+        dst_input.send_keys(to_city)
+        time.sleep(1)
+        dst_input.send_keys(Keys.ENTER)
+
+        # Date picker (always pick tomorrow)
+        driver.find_element(By.ID, "onward_cal").click()
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//table[@class='rb-monthTable first last']//td[@class!='past day'][1]").click()
+
+        # Search
+        driver.find_element(By.ID, "search_btn").click()
+        time.sleep(5)
+
+        # Scroll to load all buses
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(3)
+
+        # Get all bus elements
+        buses = driver.find_elements(By.XPATH, "//div[@class='travels lh-24 f-bold d-color']")
+
+        for i in range(len(buses)):
+            try:
+                operator = driver.find_elements(By.XPATH, "//div[@class='travels lh-24 f-bold d-color']")[i].text
+                departure = driver.find_elements(By.XPATH, "//div[@class='dp-time f-19 d-color f-bold']")[i].text
+                arrival = driver.find_elements(By.XPATH, "//div[@class='bp-time f-19 d-color disp-Inline']")[i].text
+                boarding = driver.find_elements(By.XPATH, "//div[@class='bp-desc desc-loc']")[i].text
+                dropping = driver.find_elements(By.XPATH, "//div[@class='dp-desc desc-loc']")[i].text
+                price = driver.find_elements(By.XPATH, "//span[@class='f-19 f-bold']")[i].text
+                rating = driver.find_elements(By.XPATH, "//div[@class='rating-sec lh-24']")[i].text if len(driver.find_elements(By.XPATH, "//div[@class='rating-sec lh-24']")) > i else "N/A"
+                seats = driver.find_elements(By.XPATH, "//div[@class='seat-left m-top-16']")[i].text if len(driver.find_elements(By.XPATH, "//div[@class='seat-left m-top-16']")) > i else "N/A"
+                duration = driver.find_elements(By.XPATH, "//div[@class='dur l-color f-19']")[i].text
+
+                writer.writerow([operator, departure, arrival, boarding, dropping, price, rating, seats, duration, from_city, to_city])
+            except Exception as e:
+                print(f"Error scraping bus {i} on route {from_city}-{to_city}: {e}")
+                continue
+
+driver.quit()
