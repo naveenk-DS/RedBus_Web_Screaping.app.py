@@ -1,1 +1,1 @@
-streamlit run redbus_app.py
+streamlit run app.py
