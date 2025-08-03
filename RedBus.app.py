@@ -1,11 +1,17 @@
-import os
 import streamlit as st
 import pandas as pd
+import io
 
 st.title("🚌 Redbus India-wide Bus Viewer")
 
-if os.path.exists("redbus_data.csv"):
-    df = pd.read_csv("redbus_data.csv")
-    # filtering and display logic here...
+uploaded_file = st.file_uploader("Upload Redbus CSV", type=["csv"])
+
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    st.success("CSV loaded successfully!")
+
+    # Your filter and display logic below...
+    st.dataframe(df)
 else:
-    st.warning("redbus_data.csv not found. Please run redbus_scraper.py first to generate the data.")
+    st.warning("Please upload a redbus_data.csv file to view results.")
+
