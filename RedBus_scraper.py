@@ -872,5 +872,5 @@ final_df['Seats_available'] = pd.to_numeric(final_df['Seats_available'], errors=
 
 
 final_df = final_df.replace({np.nan: None})
-path = r"E:/RedBus_Scraper_App/final_busdetails_df.csv"
+path = r"E:/RedBus_Scraper_App/final_busdetails.csv"
 final_df.to_csv(path,index = False)
