@@ -1,0 +1,13 @@
+CREATE TABLE bus_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Route_name VARCHAR(255),
+    Route_link TEXT,
+    Bus_Name VARCHAR(255),
+    Bus_Type VARCHAR(255),
+    Departing_Time TIME,
+    Duration VARCHAR(50),
+    Reaching_Time TIME,
+    Star_Rating FLOAT,
+    Price DECIMAL(10,2),
+    Seats_available INT
+);
