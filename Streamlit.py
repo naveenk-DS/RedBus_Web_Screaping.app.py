@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Load final cleaned dataset
-df = pd.read_csv("E:/RedBus_Scraper_App/final_busdetails_df.csv")
+df = pd.read_csv("E:/RedBus_Scraper_App/final_busdetails.csv")
 
 st.set_page_config(page_title="RedBus Search", layout="wide")
 st.title("🚌 RedBus India - Bus Finder App")
