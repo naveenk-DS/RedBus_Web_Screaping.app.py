@@ -154,5 +154,6 @@ final_df['Price'] = pd.to_numeric(final_df['Price'], errors='coerce').fillna(0)
 final_df['Seats_available'] = pd.to_numeric(final_df['Seats_available'], errors='coerce').fillna(0).astype(int)
 
 final_df = final_df.replace({np.nan: None})
-final_df.to_csv(f"{base_path}/final_busdetails.csv", index=False)
-print("✅ All RedBus data scraped and saved successfully.")
+# Example end part for redbus_scraper.py
+final_df.to_csv("E:/RedBus_Scraper_App/final_busdetails.csv", index=False)
+print("✅ final_busdetails.csv saved successfully.")
