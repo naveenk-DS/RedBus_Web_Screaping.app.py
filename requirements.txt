@@ -1,4 +1,0 @@
-streamlit
-pandas
-selenium
-mysql-connector-python
