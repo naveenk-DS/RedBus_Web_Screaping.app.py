@@ -18,8 +18,3 @@ CREATE TABLE IF NOT EXISTS bus_routes (
     price DECIMAL(10,2),
     seats_available INT
 );
-
-
-
-
-
